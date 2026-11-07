@@ -2,6 +2,8 @@
 
 Validate, compare, diagram and publish versioned definitions for `mrnewport/laravel-workflow`.
 
+[**Interactive workshop →**](https://matthewnewport.com/packages/laravel-workflow-tools/lab) — Edit definitions and run validation, diagrams, diffs and reviewed publication.
+
 **Compatibility:** PHP 8.3+, Laravel 12/13, Laravel Workflow 1.0 and Laravel Flow 2.2. Fields is optional; Tools does not require Filament or a frontend. Consult the [complete handbook](docs/HANDBOOK.md) for all commands, API contracts and installation fallback.
 
 ## Installation
