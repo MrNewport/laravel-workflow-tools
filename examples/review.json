@@ -1,0 +1,17 @@
+{
+    "name": "document-review",
+    "version": 1,
+    "initial": "draft",
+    "steps": [
+        {
+            "id": "draft",
+            "name": "Prepare document",
+            "transitions": {"submit": ["review"]}
+        },
+        {
+            "id": "review",
+            "name": "Review document",
+            "transitions": {"approve": ["END"], "revise": ["draft"]}
+        }
+    ]
+}

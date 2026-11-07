@@ -1,0 +1,90 @@
+name: Workflow Tools compatibility
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        # Explicit pairs keep Testbench aligned with its Laravel major.
+        include:
+          - {php: '8.3', laravel: '^12.0', testbench: '^10.0'}
+          - {php: '8.4', laravel: '^12.0', testbench: '^10.0'}
+          - {php: '8.5', laravel: '^12.0', testbench: '^10.0'}
+          - {php: '8.3', laravel: '^13.0', testbench: '^11.0'}
+          - {php: '8.4', laravel: '^13.0', testbench: '^11.0'}
+          - {php: '8.5', laravel: '^13.0', testbench: '^11.0'}
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: package-test-only
+          MYSQL_DATABASE: workflow_tools_test
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -ppackage-test-only"
+          --health-interval=10s --health-timeout=5s --health-retries=10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+          extensions: pdo_sqlite, pdo_mysql, dom, mbstring
+          coverage: none
+      - run: composer validate --strict
+      - name: Resolve released dependencies and the selected Laravel major
+        env:
+          LARAVEL_VERSION: ${{ matrix.laravel }}
+          TESTBENCH_VERSION: ${{ matrix.testbench }}
+        run: |
+          composer require --dev "laravel/framework:$LARAVEL_VERSION" "orchestra/testbench:$TESTBENCH_VERSION" --no-update --no-interaction
+          composer config repositories.laravel-flow vcs https://github.com/MrNewport/laravel-flow
+          composer config repositories.laravel-workflow vcs https://github.com/MrNewport/laravel-workflow
+          composer update --no-interaction --prefer-dist --no-progress
+      - run: composer validate --strict
+      - run: composer test
+      - name: Verify MySQL
+        run: composer test
+        env:
+          WORKFLOW_TOOLS_MYSQL_DATABASE: workflow_tools_test
+          MYSQL_TEST_HOST: 127.0.0.1
+          MYSQL_TEST_PASSWORD: package-test-only
+      - name: Check formatting and static analysis
+        if: matrix.php == '8.4' && matrix.laravel == '^13.0'
+        run: |
+          composer lint
+          composer analyse
+      - run: composer audit --locked --no-dev
+  minimum:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {laravel: '^12.0', testbench: '^10.0'}
+          - {laravel: '^13.0', testbench: '^11.0'}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          extensions: pdo_sqlite, dom, mbstring
+          coverage: none
+      - name: Resolve lowest compatible secure dependencies
+        env:
+          LARAVEL_VERSION: ${{ matrix.laravel }}
+          TESTBENCH_VERSION: ${{ matrix.testbench }}
+        run: |
+          composer require --dev "laravel/framework:$LARAVEL_VERSION" "orchestra/testbench:$TESTBENCH_VERSION" --no-update --no-interaction
+          composer config repositories.laravel-flow vcs https://github.com/MrNewport/laravel-flow
+          composer config repositories.laravel-workflow vcs https://github.com/MrNewport/laravel-workflow
+          composer update --prefer-lowest --prefer-stable --no-interaction --prefer-dist --no-progress
+      - run: composer test
+      - run: composer audit --locked --no-dev

@@ -1,0 +1,10 @@
+{
+  "name": "procurement-review",
+  "version": 1,
+  "initial": "draft",
+  "steps": [
+    {"id":"draft","name":"Prepare purchase","transitions":{"submit":["finance","security"],"cancel":["END"]}},
+    {"id":"finance","name":"Finance review","assignment_strategy":"single_user","assignment_params":{"user_id":"2"},"transitions":{"approve":["END"],"revise":["draft"],"cancel":["END"]}},
+    {"id":"security","name":"Security review","assignment_strategy":"multi_user","assignment_params":{"user_ids":["3","4"]},"transitions":{"approve":["END"],"cancel":["END"]}}
+  ]
+}

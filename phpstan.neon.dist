@@ -1,0 +1,11 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 6
+    paths:
+        - src
+    tmpDir: .phpstan.cache
+    databaseMigrationsPath:
+        - vendor/mrnewport/laravel-workflow/database/migrations
+        - vendor/mrnewport/laravel-flow/src/database/migrations

@@ -1,0 +1,56 @@
+{
+    "name": "mrnewport/laravel-workflow-tools",
+    "description": "Review, validate, compare and publish versioned Laravel Workflow definitions.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "MrNewport"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "illuminate/console": "^12.0 || ^13.0",
+        "illuminate/support": "^12.0 || ^13.0",
+        "mrnewport/laravel-workflow": "^1.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.0 || ^11.0",
+        "phpunit/phpunit": "^11.5 || ^12.0",
+        "laravel/pint": "^1.24",
+        "larastan/larastan": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "MrNewport\\LaravelWorkflowTools\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MrNewport\\LaravelWorkflowTools\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MrNewport\\LaravelWorkflowTools\\WorkflowToolsServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "format": "pint",
+        "lint": "pint --test",
+        "analyse": "phpstan analyse --memory-limit=1G",
+        "check": [
+            "@lint",
+            "@analyse",
+            "@test"
+        ]
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

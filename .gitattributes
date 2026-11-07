@@ -1,0 +1,7 @@
+/vendor export-ignore
+/.phpunit.cache export-ignore
+/.phpstan.cache export-ignore
+/.github export-ignore
+/tests export-ignore
+/phpstan.neon.dist export-ignore
+/pint.json export-ignore

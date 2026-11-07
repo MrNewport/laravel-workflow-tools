@@ -1,0 +1,4 @@
+{
+    "preset": "laravel",
+    "exclude": ["vendor", ".phpstan.cache", ".phpunit.cache"]
+}

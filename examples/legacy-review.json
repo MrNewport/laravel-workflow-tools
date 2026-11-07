@@ -1,0 +1,15 @@
+{
+    "name": "document-review",
+    "version": 1,
+    "initial": "draft",
+    "tasks": [
+        {"id": "draft", "name": "Prepare document", "email_notify": 0},
+        {"id": "review", "name": "Review document", "email_notify": 0},
+        {"id": "END", "name": "Complete", "email_notify": 0}
+    ],
+    "transitions": [
+        {"task": "draft", "action": "submit", "next_task": "review"},
+        {"task": "review", "action": "approve", "next_task": "END"},
+        {"task": "review", "action": "revise", "next_task": "draft"}
+    ]
+}
